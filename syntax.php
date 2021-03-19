@@ -132,12 +132,12 @@ class syntax_plugin_symbols4odt extends Symbols_Syntax_Plugin
 					"substitute4ODT" 	=>$this->getUTF8forHexadecimal('00AD'), // alternative: chr(194).chr(173),
 				),
 				"checkbox_empty" => array( 
-					"pattern" 			=> array('<cb_empty>'),
+					"pattern" 			=> array('<checkbox>','<CHECKBOX>'),
 					"substitute4XHTML"	=>  "<input type='checkbox'/>",
 					"substitute4ODT" 	=> $this->getUTF8forHexadecimal('2610'),
 				),
 				"checkbox_filled" => array( 
-					"pattern" 			=> array('<cb_filled>'),
+					"pattern" 			=> array('<checkbox_checked>','<CHECKBOX_CHECKED>'),
 					"substitute4XHTML"	=>  "<input type='checkbox' checked/>",
 					"substitute4ODT" 	=> $this->getUTF8forHexadecimal('2612'),
 				),
