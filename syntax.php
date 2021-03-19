@@ -11,9 +11,13 @@ if (!defined('DOKU_INC')) {
     die();
 }
 
-class syntax_plugin_symbols4odt extends DokuWiki_Syntax_Plugin
-{
-    /**
+abstract class Symbols_Syntax_Plugin extends DokuWiki_Syntax_Plugin {
+	
+	protected array $patternMap;
+	
+	protected abstract function getPatterns();
+	
+	/**
      * @return string Syntax mode type
      */
     public function getType()
@@ -36,7 +40,7 @@ class syntax_plugin_symbols4odt extends DokuWiki_Syntax_Plugin
     {
         return 1;
     }
-
+	
     /**
      * Connect lookup pattern to lexer.
      *
@@ -44,10 +48,11 @@ class syntax_plugin_symbols4odt extends DokuWiki_Syntax_Plugin
      */
     public function connectTo($mode)
     {
-        $this->Lexer->addSpecialPattern('<SHY>', $mode, 'plugin_symbols4odt');
-        $this->Lexer->addSpecialPattern('<shy>', $mode, 'plugin_symbols4odt');
-        $this->Lexer->addSpecialPattern('<->', $mode, 'plugin_symbols4odt');
-        $this->Lexer->addSpecialPattern('(?<![\x20-\x2F\x5C])\x5C\x2D', $mode, 'plugin_symbols4odt'); // this one is looking for '\-'
+		foreach($this->getPatterns() as $pluginMode => $substitutionSet) {
+			foreach($substitutionSet["pattern"] as $substitionString) {
+				$this->Lexer->addSpecialPattern($substitionString, $mode, substr(get_class($this), 7));
+			}
+		}
 	}
 
     /**
@@ -62,6 +67,15 @@ class syntax_plugin_symbols4odt extends DokuWiki_Syntax_Plugin
      */
     public function handle($match, $state, $pos, Doku_Handler $handler)
     {
+		foreach($this->getPatterns() as $pluginMode => $substitutionSet) {
+			foreach($substitutionSet["pattern"] as $patternString) {
+				if (strcasecmp($patternString,$match) === 0)
+					return array(
+						"substitute4XHTML" => $substitutionSet["substitute4XHTML"],
+						"substitute4ODT" => $substitutionSet["substitute4ODT"],
+					);
+			}
+		}
         return array();
     }
 
@@ -78,28 +92,59 @@ class syntax_plugin_symbols4odt extends DokuWiki_Syntax_Plugin
     {
         if ($mode == 'xhtml') {
 			
-			// insert a soft hyphen for html
-			//Ziel: 9746 - ( U+2612 )
-			//hex: 0xe2 0x98 0x92 - ( hex: 0x1a 0x0c )
-			//chr: chr(242).chr(152).chr(146) ???
-			//$renderer->doc .= "<input type='checkbox' id='vehicle1' name='vehicle1' value='Bike'/><label for='vehicle1'> I have a bike</label>";
-			$renderer->doc .= '&shy;';
+			$renderer->doc .= $data["substitute4XHTML"];
             return true;
 			
         } elseif ($mode == 'odt') {
 			
-			// insert a soft hyphen
-			// - [hyphen character:       - (ascii code:  &#45;)]
-			// - [soft hyphen charactter: ­ (ascii code: &#173;)]
-			$renderer->cdata(chr(194) . chr(173));
-			//$renderer->cdata(mb_convert_encoding('&#x2612;', 'UTF-8', 'HTML-ENTITIES'));
-			//$renderer->cdata(chr(242).chr(152).chr(146));
-			//$renderer->doc.("<draw:control text:anchor-type='as-char' draw:z-index='3' draw:name='Form1' draw:style-name='gr1' draw:text-style-name='P24' svg:width='0.32cm' svg:height='0.32cm' draw:control='control1'/>");
+			$renderer->cdata($data["substitute4ODT"]);
 			return true;
 			
 		}
 
         return false;
     }
+	
+
+    /**
+     * Returns a unicode character for the given unicode number.
+     *
+     * @param string    $unicodenumber    Unicode number of the character to be returned - only the number!
+	                                      For example, in order to get an 'A' character (unicode number: U+0041), provide a parameter $unicodenumber with a value of '0041'.
+     *
+     * @return The encoded String or Array on success, false in case of an error. (see return value of mb_convert_encoding, https://www.php.net/manual/de/function.mb-convert-encoding.php)
+     */
+	public function getUTF8forHexadecimal(string $unicodenumber){
+		return mb_convert_encoding('&#x'.$unicodenumber.';', 'UTF-8', 'HTML-ENTITIES');
+	}
+}
+
+class syntax_plugin_symbols4odt extends Symbols_Syntax_Plugin
+{
+	private $patterns;
+	
+	protected function getPatterns() {
+		if (!isset($this->patterns)) {
+			$this->patterns = array(
+				"shy" => array( 
+					"pattern" 			=> array('<SHY>','<shy>','<->'), //array('(?<![\x20-\x2F\x5C])\x5C\x2D','<SHY>','<shy>','<->'), // the first (the complex) pattern is looking for '\-', but I don't get that to compare to the $match in handle()
+					"substitute4XHTML"	=> '&shy;',
+					"substitute4ODT" 	=>$this->getUTF8forHexadecimal('00AD'), // alternative: chr(194).chr(173),
+				),
+				"checkbox_empty" => array( 
+					"pattern" 			=> array('<cb_empty>'),
+					"substitute4XHTML"	=>  "<input type='checkbox'/>",
+					"substitute4ODT" 	=> $this->getUTF8forHexadecimal('2610'),
+				),
+				"checkbox_filled" => array( 
+					"pattern" 			=> array('<cb_filled>'),
+					"substitute4XHTML"	=>  "<input type='checkbox' checked/>",
+					"substitute4ODT" 	=> $this->getUTF8forHexadecimal('2612'),
+				),
+			);
+		}
+		
+		return $this->patterns;
+	}
 }
 
