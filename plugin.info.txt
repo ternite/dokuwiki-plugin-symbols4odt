@@ -1,0 +1,7 @@
+base   symbols4odt
+author Thomas Schäfer
+email  thomas.schaefer@itschert.net
+date   2021-03-13
+name   symbols4odt Soft Hyphen plugin
+desc   Provides soft hyphens for both wiki pages and ODT files exported by the odt plugin.
+url    https://www.dokuwiki.org/plugin:symbols4odt
