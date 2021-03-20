@@ -68,12 +68,22 @@ abstract class Symbols_Syntax_Plugin extends DokuWiki_Syntax_Plugin {
     public function handle($match, $state, $pos, Doku_Handler $handler)
     {
 		foreach($this->getPatterns() as $pluginMode => $substitutionSet) {
+			
+			$substitutesArray =  array(
+				"substitute4XHTML" => $substitutionSet["substitute4XHTML"],
+				"substitute4ODT" => $substitutionSet["substitute4ODT"],
+			);
+			
 			foreach($substitutionSet["pattern"] as $patternString) {
-				if (strcasecmp($patternString,$match) === 0)
-					return array(
-						"substitute4XHTML" => $substitutionSet["substitute4XHTML"],
-						"substitute4ODT" => $substitutionSet["substitute4ODT"],
-					);
+				if (strcasecmp($patternString,$match) === 0) {
+					return $substitutesArray;
+				}
+				
+				foreach($substitutionSet["matchhelper"] as $matchHelper) {
+					if (strcasecmp($matchHelper,$match) === 0) {
+						return $substitutesArray;
+					}
+				}
 			}
 		}
         return array();
@@ -127,14 +137,15 @@ class syntax_plugin_symbols4odt extends Symbols_Syntax_Plugin
 		if (!isset($this->patterns)) {
 			$this->patterns = array(
 				"shy" => array( 
-					"pattern" 			=> array('<SHY>','<shy>','<->'), //array('(?<![\x20-\x2F\x5C])\x5C\x2D','<SHY>','<shy>','<->'), // the first (the complex) pattern is looking for '\-', but I don't get that to compare to the $match in handle()
+					"pattern" 			=> array('(?<![\x20-\x2F\x5C])\x5C\x2D','<SHY>','<shy>','<->'),
+					"matchhelper"		=> array('\-'),
 					"substitute4XHTML"	=> '&shy;',
 					"substitute4ODT" 	=>$this->getUTF8forHexadecimal('00AD'), // alternative: chr(194).chr(173),
 				),
 				"checkbox_empty" => array( 
 					"pattern" 			=> array('<checkbox>','<CHECKBOX>'),
 					"substitute4XHTML"	=>  "<input type='checkbox'/>",
-					"substitute4ODT" 	=> $this->getUTF8forHexadecimal('2610'),
+					"substitute4ODT" 	=> $this->getUTF8forHexadecimal('2610'), // better would be to insert ODT code for a checkbox like: <draw:control text:anchor-type='as-char' draw:z-index='3' draw:name='Form1' draw:style-name='gr1' draw:text-style-name='P24' svg:width='0.32cm' svg:height='0.32cm' draw:control='control1'/>
 				),
 				"checkbox_filled" => array( 
 					"pattern" 			=> array('<checkbox_checked>','<CHECKBOX_CHECKED>'),
