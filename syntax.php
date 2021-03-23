@@ -79,9 +79,11 @@ abstract class Symbols_Syntax_Plugin extends DokuWiki_Syntax_Plugin {
 					return $substitutesArray;
 				}
 				
-				foreach($substitutionSet["matchhelper"] as $matchHelper) {
-					if (strcasecmp($matchHelper,$match) === 0) {
-						return $substitutesArray;
+				if ($substitutionSet["matchhelper"]) {
+					foreach($substitutionSet["matchhelper"] as $matchHelper) {
+						if (strcasecmp($matchHelper,$match) === 0) {
+							return $substitutesArray;
+						}
 					}
 				}
 			}
