@@ -1,0 +1,79 @@
+====== symbols4odt Plugin ======
+
+---- plugin ----
+description: Provides symbols that can be exportet into ODT files with the odt plugin. For example, the plugin can create checkboxes in wiki pages, as well as in an exportet ODT file.
+author     : Thomas Schäfer
+email      : thomas@hilbershome.de 
+type       : syntax
+lastupdate : 2021-03-27
+compatible : 2020-07-29 "Hogfather"
+depends    : odt
+conflicts  : 
+similar    : 
+tags       : export, odt, symbols
+
+downloadurl: https://github.com/ternite/dokuwiki-plugin-symbols4odt/archive/v0.84TODO.zip
+bugtracker : https://github.com/ternite/dokuwiki-plugin-symbols4odt/issues
+sourcerepo : https://github.com/ternite/dokuwiki-plugin-symbols4odt
+donationurl: 
+
+screenshot_img : 
+----
+
+===== Installation =====
+
+Install the plugin using the [[plugin:plugin|Plugin Manager]] and the download URL above, which points to latest version of the plugin. Refer to [[:Plugins]] on how to install plugins manually.
+
+:!: **External requirements:** This plugin requires the following additional components that must be installed separately: 
+  * [[odt]]
+
+===== What's it for? =====
+
+TODO
+
+===== Syntax =====
+
+==== checkbox ====
+
+<code>{{checkbox}}</code>
+
+//Example:// <code>{{checkbox}}</code> will create an empty checkbox.
+
+==== checkbox_checked ====
+
+<code>{{checkbox_checked}}</code>
+
+//Example:// <code>{{checkbox}}</code> will create a checked checkbox.
+
+==== shy ====
+
+<code>{{shy}}</code>
+
+//Example:// <code>{{shy}}</code> will create a soft hyphen. If inserted in the middle of a word, this indicates that a line break can be placed there, if necessary. 
+
+Alternative syntax: <code><-></code>, <code>\-</code>
+
+===== Configuration and Settings =====
+
+  Not applicable
+
+===== Development =====
+
+[[https://github.com/ternite/dokuwiki-plugin-symbols4odt|Sources]] on github.
+
+=== Change Log ===
+
+  * **2021-11-TODO**
+    * v0.82TODO (Initial release)
+
+=== Known Bugs and Issues ===
+
+See [[https://github.com/ternite/dokuwiki-plugin-symbols4odt/issues|issue tracker]] on github.
+
+===== FAQ =====
+
+None, yet.
+
+===== Discussion =====
+
+Start here.
