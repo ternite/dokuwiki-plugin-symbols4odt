@@ -1,18 +1,18 @@
 ====== symbols4odt Plugin ======
 
 ---- plugin ----
-description: Provides symbols that can be exported into ODT files with the odt plugin. For example, the plugin can create checkboxes in wiki pages, as well as in an exportet ODT file.
+description: Provides symbols that can be exported into ODT files with the odt plugin. For example, the plugin can create checkboxes in wiki pages, as well as in an exported ODT file.
 author     : Thomas Schäfer
 email      : thomas@hilbershome.de 
 type       : syntax
-lastupdate : 2021-03-27
+lastupdate : 2021-11-01
 compatible : 2020-07-29 "Hogfather"
 depends    : odt
 conflicts  : 
 similar    : shy
 tags       : export, odt, symbols
 
-downloadurl: https://github.com/ternite/dokuwiki-plugin-symbols4odt/archive/v0.84TODO.zip
+downloadurl: https://github.com/ternite/dokuwiki-plugin-symbols4odt/archive/v0.8.zip
 bugtracker : https://github.com/ternite/dokuwiki-plugin-symbols4odt/issues
 sourcerepo : https://github.com/ternite/dokuwiki-plugin-symbols4odt
 donationurl: 
@@ -33,7 +33,7 @@ This plugin allows for the insertion of symbols that work both on wiki pages, as
 
 Originally, this plugin was intended for the insertion of soft hyphens. It was implemented to provide the functionality of the [[https://www.dokuwiki.org/plugin:shy|Shy Syntax Plugin]] plus an export implementation for ODT files created by the [[https://www.dokuwiki.org/plugin:odt|ODT Plugin]].
 
-The implementation was a more generic approach, so it can create more symbols in addition to soft hyphens.
+The implementation was a more generic approach, so it can create more symbols in addition to soft hyphens. It has a generic syntax for the insertion of UTF8 symbols, and a specific syntax for adding soft hyphens, and check boxes.
 
 ===== Syntax =====
 
@@ -74,8 +74,8 @@ You can access ''$this->getUTF8forHexadecimal($utfCode)'' to pass through UTF8 s
 
 === Change Log ===
 
-  * **2021-11-TODO**
-    * v0.82TODO (Initial release)
+  * **2021-11-01**
+    * v0.8 (Initial release)
 
 === Known Bugs and Issues ===
 
