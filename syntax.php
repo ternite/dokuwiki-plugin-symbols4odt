@@ -53,6 +53,8 @@ abstract class Symbols_Syntax_Plugin extends DokuWiki_Syntax_Plugin {
 				$this->Lexer->addSpecialPattern($substitionString, $mode, substr(get_class($this), 7));
 			}
 		}
+		
+		$this->Lexer->addSpecialPattern("{{utf8symbol>.+?}}", $mode, substr(get_class($this), 7));
 	}
 
     /**
@@ -88,6 +90,23 @@ abstract class Symbols_Syntax_Plugin extends DokuWiki_Syntax_Plugin {
 				}
 			}
 		}
+		
+		//$substitutesArray =  array(
+		//		"substitute4XHTML" => $match,
+		//		"substitute4ODT" => $match,
+		//	);
+		//return $substitutesArray;
+		
+		if (strpos($match, 'utf8symbol') != false) {
+			$utf8_code = substr($match, 13, -2); //strip markup
+			$substitutesArray =  array(
+				"substitute4XHTML" => $this->getUTF8forHexadecimal($utf8_code),
+				"substitute4ODT" => $this->getUTF8forHexadecimal($utf8_code),
+			);
+			
+			return $substitutesArray;
+		}
+		
         return array();
     }
 
@@ -135,6 +154,7 @@ class syntax_plugin_symbols4odt extends Symbols_Syntax_Plugin
 {
 	private $patterns;
 	
+	// see https://www.dokuwiki.org/plugin:symbols4odt?do=edit#configuration_and_settings on how to create new patterns
 	protected function getPatterns() {
 		if (!isset($this->patterns)) {
 			$this->patterns = array(

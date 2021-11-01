@@ -1,7 +1,7 @@
 ====== symbols4odt Plugin ======
 
 ---- plugin ----
-description: Provides symbols that can be exportet into ODT files with the odt plugin. For example, the plugin can create checkboxes in wiki pages, as well as in an exportet ODT file.
+description: Provides symbols that can be exported into ODT files with the odt plugin. For example, the plugin can create checkboxes in wiki pages, as well as in an exportet ODT file.
 author     : Thomas Schäfer
 email      : thomas@hilbershome.de 
 type       : syntax
@@ -9,7 +9,7 @@ lastupdate : 2021-03-27
 compatible : 2020-07-29 "Hogfather"
 depends    : odt
 conflicts  : 
-similar    : 
+similar    : shy
 tags       : export, odt, symbols
 
 downloadurl: https://github.com/ternite/dokuwiki-plugin-symbols4odt/archive/v0.84TODO.zip
@@ -29,33 +29,44 @@ Install the plugin using the [[plugin:plugin|Plugin Manager]] and the download U
 
 ===== What's it for? =====
 
-TODO
+This plugin allows for the insertion of symbols that work both on wiki pages, as well as in exported ODT files.
+
+Originally, this plugin was intended for the insertion of soft hyphens. It was implemented to provide the functionality of the [[https://www.dokuwiki.org/plugin:shy|Shy Syntax Plugin]] plus an export implementation for ODT files created by the [[https://www.dokuwiki.org/plugin:odt|ODT Plugin]].
+
+The implementation was a more generic approach, so it can create more symbols in addition to soft hyphens.
 
 ===== Syntax =====
 
-==== checkbox ====
-
-<code>{{checkbox}}</code>
-
-//Example:// <code>{{checkbox}}</code> will create an empty checkbox.
-
-==== checkbox_checked ====
-
-<code>{{checkbox_checked}}</code>
-
-//Example:// <code>{{checkbox}}</code> will create a checked checkbox.
-
-==== shy ====
-
-<code>{{shy}}</code>
-
-//Example:// <code>{{shy}}</code> will create a soft hyphen. If inserted in the middle of a word, this indicates that a line break can be placed there, if necessary. 
-
-Alternative syntax: <code><-></code>, <code>\-</code>
+^ Syntax ^ Result ^ Alternative Syntax ^
+| <code>{{utf8symbol>CODE}}</code> | Generic function to insert a hexadecimal code of an UTF8 symbol. Inserting 26A0 (instead of CODE) will create the UTF8 symbol ''[[https://www.compart.com/de/unicode/U+26A0|&#x26A0]];'' (Warning Sign). | None. |
+| <code><checkbox></code> | Creates an empty checkbox. | <code><CHECKBOX></code> |
+| <code><checkbox_checked></code> | Creates a checked checkbox. | <code><CHECKBOX_CHECKED></code> |
+| <code><shy></code> | Create a soft hyphen, functional in wiki pages and ODT files. If inserted in the middle of a word, this indicates that a line break can be placed there, if necessary.  | <code><SHY></code><code><-></code><code>\-</code> |
 
 ===== Configuration and Settings =====
 
-  Not applicable
+**No configuration settings available.**
+
+On the code level, the plugin is readily extendible by inserting patterns into the ''getPatterns()'' function inside the class ''syntax_plugin_symbols4odt'' (within the module's ''syntax.php'').
+
+This extension mechanicsm is explained in the following by example:
+
+<code>"checkbox_filled" => array( 
+    "pattern"          => array('<checkbox_checked>','<CHECKBOX_CHECKED>'),
+    "substitute4XHTML" => "<input type='checkbox' checked/>",
+    "substitute4ODT"   => $this->getUTF8forHexadecimal('2612'),
+),</code>
+
+This entry is an element of the array stored in ''$this->patterns''.
+
+The first string, ''checkbox_filled'' is the name of the pattern, which will be used internally and must be unique in respect to the plugin's list of patterns. This string maps to an array that consists of 3 constituents.
+
+^ Constituent ^ Semantics ^
+| <code>"pattern"</code> | Maps to an array of strings that will be used within the [[https://www.dokuwiki.org/devel:syntax_plugins?s[]=handle#handle_method|handle() method]] of this plugin. In this example, the pattern "checkbox_filled" will count as a match if the parsed wiki text contains either the string "<checkbox_checked>", or "<CHECKBOX_CHECKED>". |
+| <code>"substitute4XHTML"</code> | In case of a match (see "pattern"), the string defined in ''substitute4XHTML'' will be given to the XHTML representation of the wiki page. HTML Tags are allowed, here, so take care of what you define here, and who accesses the syntax.php file. |
+| <code>"substitute4XODT"</code> | In case of a match (see "pattern"), the string defined in ''substitute4XODT'' will be given to the ODT export file. |
+
+You can access ''$this->getUTF8forHexadecimal($utfCode)'' to pass through UTF8 symbols. Inserting ''$utfCode = "26A0"'' will create the UTF8 symbol ''[[https://www.compart.com/de/unicode/U+26A0|&#x26A0]];'' (Warning Sign) as an HTML entity, which should nicely show both on XTML output, and on ODT output.
 
 ===== Development =====
 
