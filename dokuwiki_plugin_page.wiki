@@ -29,7 +29,7 @@ Install the plugin using the [[plugin:plugin|Plugin Manager]] and the download U
 
 ===== What's it for? =====
 
-This plugin allows for the insertion of symbols that work both on wiki pages, as well as in exported ODT files.
+This plugin allows for the insertion of symbols that work both on wiki pages, as well as in exported ODT files. Supports using UTF8 codes that are translated to symbols.
 
 Originally, this plugin was intended for the insertion of soft hyphens. It was implemented to provide the functionality of the [[https://www.dokuwiki.org/plugin:shy|Shy Syntax Plugin]] plus an export implementation for ODT files created by the [[https://www.dokuwiki.org/plugin:odt|ODT Plugin]].
 
